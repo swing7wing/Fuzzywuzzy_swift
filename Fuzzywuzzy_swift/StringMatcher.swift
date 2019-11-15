@@ -26,7 +26,4 @@ class StringMatcher: NSObject {
         if lenSum == 0 { return 1 }
         return Float(lenSum - levenshteinDistance) / Float(lenSum)
     }
-
-
 }
-

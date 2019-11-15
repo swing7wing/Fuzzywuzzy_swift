@@ -42,7 +42,13 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
     }
     
     func testPartialRatio() {
-        let strPairs = [("some", ""), ("", "some"), ("", ""), ("abcd", "XXXbcdeEEE"), ("what a wonderful 世界", "wonderful 世"), ("this is a test", "this is a test!")]
+        let strPairs = [("this is a test", "this is a test!"), ("Aqua".lowercased(), """
+            Ingredients: Sodium Laureth Sulfate Disodium Cocoamphodiacetate
+            Sodium Chloride Laureth - 2 Glycol Distearate PEG - 7 Glyceryl Cocoate Sodium
+            Benzoate - Citric Acid Laureth - 4 Parfum Polyquaternium - 10 Salicvlic Acid -
+            CGtamidopropyl Betaine Niacinamide Panthenol Acid Violet 43 - Sodium Hy
+            droxide Hexyl Salicylate Glycerin Propylene Glycol Aqua
+            """.lowercased())]
         for (str1, str2) in strPairs {
             print("STR1: \(str1)")
             print("STR2: \(str2)")
