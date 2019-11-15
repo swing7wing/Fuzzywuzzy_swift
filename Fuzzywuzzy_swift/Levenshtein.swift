@@ -43,14 +43,149 @@ class Levenshtein: NSObject {
         return costM[charArr1.count][charArr2.count]
     }
     
-    func getEditOps(s1: String, s2: String) -> [EditOp] {
+    class func getMatchingBlocks(s1: String, s2: String) -> [MatchingBlock] {
+        var ops = getEditOps(s1: s1, s2: s2)
+        var len1 = s1.count
+        var len2 = s2.count
+        
+        var n = ops.count
+        
+        var numberOfMatchingBlocks: Int
+        var i: Int
+        var sourcePos: Int
+        var destPos: Int
+        
+        numberOfMatchingBlocks = 0
+        var o = 0
+        sourcePos = 0
+        destPos = 0
+        // Possibly add destPos = 0??
+        var type: EditType
+        
+        i = n
+        while i != 0 {
+            
+            i -= 1
+            while ops[o].editType == .keep && i != 0 {
+                o += 1
+            }
+            if i == 0 {
+                break
+            }
+            if sourcePos < ops[o].sourcePos! || destPos < ops[o].destPos! {
+                numberOfMatchingBlocks += 1
+                sourcePos = ops[o].sourcePos!
+                destPos = ops[o].destPos!
+            }
+            
+            if let type = ops[o].editType {
+                switch type {
+                case .replace:
+                    repeat {
+                        sourcePos += 1
+                        destPos += 1
+                        i -= 1
+                        o += 1
+                    } while i != 0 && ops[0].editType == type && sourcePos == ops[0].sourcePos && destPos == ops[o].destPos
+                    break
+                
+                case .delete:
+                    repeat {
+                        sourcePos += 1
+                        i -= 1
+                        o += 1
+                    } while i != 0 && ops[o].editType == type && sourcePos == ops[o].sourcePos && destPos == ops[o].destPos
+                    break
+                    
+                case .insert:
+                    repeat {
+                        destPos += 1
+                        i -= 1
+                        o += 1
+                    } while i != 0 && ops[0].editType == type && sourcePos == ops[o].sourcePos && destPos == ops[o].destPos
+                    break
+                    
+                default:
+                    break
+                }
+            }
+        }
+        if sourcePos < len1 || destPos < len2 {
+            numberOfMatchingBlocks += 1
+        }
+        var matchingBlocks: [MatchingBlock] = []
+        o = 0
+        sourcePos = 0
+        destPos = 0
+        var mbIndex = 0
+        
+        i = n
+        while i != 0 {
+            i -= 1
+            while ops[o].editType == .keep && i != 0 {
+                o += 1
+            }
+            if i == 0 {
+                break
+            }
+            if sourcePos < ops[o].sourcePos! || destPos < ops[o].destPos! {
+                var mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: ops[o].sourcePos! - sourcePos)
+                sourcePos = ops[o].sourcePos!
+                destPos = ops[o].destPos!
+                mbIndex += 1
+                matchingBlocks[mbIndex] = mb
+            }
+            type = ops[o].editType!
+            
+            switch type {
+            case .replace:
+                repeat {
+                    sourcePos += 1
+                    destPos += 1
+                    i -= 1
+                    o += 1
+                } while i != 0 && ops[o].editType == type && sourcePos == ops[o].sourcePos && destPos == ops[0].destPos
+                break
+            case .delete:
+                repeat {
+                    sourcePos += 1
+                    i -= 1
+                    o += 1
+                } while i != 0 && ops[o].editType == type && sourcePos == ops[o].sourcePos && destPos == ops[o].destPos
+                break
+            case .insert:
+                repeat {
+                    destPos += 1
+                    i -= 1
+                    o += 1
+                } while i != 0 && ops[o].editType == type && sourcePos == ops[o].sourcePos && destPos == ops[o].destPos
+                break
+            default:
+                break
+            }
+        }
+        
+        if sourcePos < len1 || destPos < len2 {
+            var mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: len1 - sourcePos)
+            mbIndex += 1
+            matchingBlocks[mbIndex] = mb
+        }
+        
+        var finalBlock = MatchingBlock(sourcePos: len1, destPos: len2, length: 0)
+        
+        matchingBlocks[mbIndex] = finalBlock
+        
+        return matchingBlocks
+    }
+    
+    private class func getEditOps(s1: String, s2: String) -> [EditOp] {
         var len1 = s1.count
         var c1 = Array(s1)
         var len2 = s2.count
         var c2 = Array(s2)
         
         var i: Int
-        var matrix: [Int] = []
+        var matrix = NSMutableArray(capacity: len2 * len1)
         
         var p1 = 0
         var p2 = 0
@@ -76,14 +211,14 @@ class Levenshtein: NSObject {
         len1 += 1
         len2 += 1
         
-        for index in 0...len2 {
+        for index in 0..<len2 {
             matrix[index] = index
         }
-        for index in 1...len1 {
+        for index in 1..<len1 {
             matrix[len2 * index] = index
         }
         
-        for index in 1...len1 {
+        for index in 1..<len1 {
             var ptrPrev = (index - 1) * len2
             var ptrC = index * len2
             var ptrEnd = ptrC + len2 - 1
@@ -99,13 +234,13 @@ class Levenshtein: NSObject {
                 
                 ptrPrev += 1
                 ptrChar2 += 1
-                var c3 = matrix[ptrPrev] + (char1 != c2[ptrChar2] ? 1 : 0)
+                var c3 = matrix[ptrPrev] as! Int + (char1 != c2[ptrChar2] ? 1 : 0)
                 x += 1
                 
                 if x > c3 {
                     x = c3
                 }
-                c3 = matrix[ptrPrev] + 1
+                c3 = matrix[ptrPrev] as! Int + 1
                 if x > c3 {
                     x = c3
                 }
@@ -113,18 +248,18 @@ class Levenshtein: NSObject {
                 matrix[ptrC] = x
             }
         }
-        return editOpsFromCostMatrix(len1: len1, c1: c1, p1: p1, o1: len1o, len2: len2, c2: c2, p2: p2, o2: len2o, matrix: matrix)
+        return editOpsFromCostMatrix(len1: len1, c1: c1, p1: p1, o1: len1o, len2: len2, c2: c2, p2: p2, o2: len2o, matrix: matrix as! [Int])
     }
     
-    func editOpsFromCostMatrix(len1: Int, c1: [Character], p1: Int, o1: Int, len2: Int, c2: [Character], p2: Int, o2: Int, matrix: [Int]) -> [EditOp] {
+    private class func editOpsFromCostMatrix(len1: Int, c1: [Character], p1: Int, o1: Int, len2: Int, c2: [Character], p2: Int, o2: Int, matrix: [Int]) -> [EditOp] {
         
         var i: Int
         var j: Int
         var pos: Int
         var ptr: Int
-        var ops: [EditOp] = []
-        var dir = 0
         pos = matrix[len1 * len2 - 1]
+        var ops = NSMutableArray(capacity: pos + 1 )
+        var dir = 0
         i = len1 - 1
         j = len2 - 1
         ptr = len1 * len2 - 1
@@ -176,7 +311,7 @@ class Levenshtein: NSObject {
             if dir == 0 && j != 0 && matrix[ptr] == matrix[ptr - 1] + 1 {
                 pos -= 1
                 var eop = EditOp()
-                ops[pos] = eop
+                ops[1] = "eop"
                 eop.editType = .insert
                 eop.sourcePos = i + o1
                 j -= 1
@@ -199,7 +334,7 @@ class Levenshtein: NSObject {
             }
             print("Can't calculate edit op")
         }
-        return ops
+        return ops as! [EditOp]
     }
 }
 

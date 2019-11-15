@@ -28,31 +28,32 @@ public extension String {
         }
 
         let m = StringMatcher(str1: shorter, str2: longer)
-        let commonPairs = m.commonSubStringPairs
-
-        let scores = commonPairs.map { (pair) -> Float in
-            /// filter out pairs that are too short ( < 20% of the lenght of the shoter string )
-            if pair.len * 5 < shorter.count {
-                return 0
+        let matchingBlocks = m.matchingBlocks
+        
+        var scores: [Float] = []
+        var maxScore: Float = 0
+        
+        for var matchingBlock in matchingBlocks {
+            
+            var dist = matchingBlock.destPos - matchingBlock.sourcePos
+            
+            var longStart = dist > 0 ? dist : 0
+            var longEnd = longStart + shorter.count
+            
+            if longEnd > longer.count {
+                longEnd = longer.count
             }
-            //str2.distance(from: pair.str2SubRange.lowerBound, to: longer.endIndex)
-            let sub2RemLen = longer.distance(from: pair.str2SubRange.lowerBound, to: longer.endIndex)
-            var longSubStart = pair.str2SubRange.lowerBound
-            if sub2RemLen < shorter.count {
-                longSubStart = longer.index(longSubStart, offsetBy: sub2RemLen - shorter.count)
-                //longSubStart = longSubStart.advanced(by: sub2RemLen - shorter.characters.count)
+            var longSubstr = longer.suffix(longStart).suffix(longEnd - longStart)
+            
+            var ratio = m.fuzzRatio()
+            
+            if ratio > 0.995 {
+                return 100
             }
-            let longSubEnd = longer.index(longSubStart, offsetBy: shorter.count - 1)
-            //let longSubEnd = longSubStart.advanced(by: shorter.characters.count-1)
-            let closedRange: Range = longSubStart..<longSubEnd
-            let longSubStr = String(longer[closedRange])
-            let r = StringMatcher(str1: shorter, str2: longSubStr).fuzzRatio()
-            if r > 0.995 { /// magic number appears in original python code
-                return 1
-            } else {
-                return r
-            }
+            
+            scores.append(ratio)
         }
+        
         return Int((scores.max() ?? 0) * 100)
     }
 

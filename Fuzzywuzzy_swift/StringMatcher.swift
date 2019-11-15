@@ -13,7 +13,7 @@ class StringMatcher: NSObject {
     let str2: String
 
     lazy var levenshteinDistance: Int = Levenshtein.distance(str1: self.str1, str2: self.str2)
-    lazy var commonSubStringPairs: [CommonSubstringPair] = CommonSubstrings.pairs(str1: self.str1, str2: self.str2)
+    lazy var matchingBlocks = Levenshtein.getMatchingBlocks(s1: self.str1, s2: self.str2)
 
     init(str1: String, str2: String) {
         self.str1 = str1
@@ -26,7 +26,4 @@ class StringMatcher: NSObject {
         if lenSum == 0 { return 1 }
         return Float(lenSum - levenshteinDistance) / Float(lenSum)
     }
-
-
 }
-
