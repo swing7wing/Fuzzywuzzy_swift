@@ -80,25 +80,25 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
     }
     
     func testLevenshteinDistance() {
-        XCTAssert(LevenshteinDistance.distance(str1: "something", str2: "some") == 5)
+        XCTAssert(Levenshtein.distance(str1: "something", str2: "some") == 5)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "something", str2: "omethi") == 3)
+        XCTAssert(Levenshtein.distance(str1: "something", str2: "omethi") == 3)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "something", str2: "same") == 6)
+        XCTAssert(Levenshtein.distance(str1: "something", str2: "same") == 6)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "something", str2: "samewrongthong") == 7)
+        XCTAssert(Levenshtein.distance(str1: "something", str2: "samewrongthong") == 7)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "something", str2: "") == 9)
+        XCTAssert(Levenshtein.distance(str1: "something", str2: "") == 9)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "", str2: "some") == 4)
+        XCTAssert(Levenshtein.distance(str1: "", str2: "some") == 4)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "some", str2: "some") == 0)
+        XCTAssert(Levenshtein.distance(str1: "some", str2: "some") == 0)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "", str2: "") == 0)
+        XCTAssert(Levenshtein.distance(str1: "", str2: "") == 0)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "我something", str2: "someth") == 4)
+        XCTAssert(Levenshtein.distance(str1: "我something", str2: "someth") == 4)
         
-        XCTAssert(LevenshteinDistance.distance(str1: "我好饿啊啊啊啊", str2: "好烦啊") == 5)
+        XCTAssert(Levenshtein.distance(str1: "我好饿啊啊啊啊", str2: "好烦啊") == 5)
         
     }
 }

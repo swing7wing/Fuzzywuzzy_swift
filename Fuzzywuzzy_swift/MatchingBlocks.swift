@@ -14,9 +14,9 @@ struct CommonSubstringPair {
     let len: Int
 }
 
-class CommonSubstrings: NSObject {
+class MatchingBlocks {
     /// get all pairs of common substrings
-    class func pairs(str1: String, str2: String) -> [CommonSubstringPair] {
+    class func get(str1: String, str2: String) -> [CommonSubstringPair] {
         /// convert String to array of Characters
         let charArr1 = Array(str1)
         let charArr2 = Array(str2)

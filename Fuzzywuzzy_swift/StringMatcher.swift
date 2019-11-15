@@ -12,7 +12,7 @@ class StringMatcher: NSObject {
     let str1: String
     let str2: String
 
-    lazy var levenshteinDistance: Int = LevenshteinDistance.distance(str1: self.str1, str2: self.str2)
+    lazy var levenshteinDistance: Int = Levenshtein.distance(str1: self.str1, str2: self.str2)
     lazy var commonSubStringPairs: [CommonSubstringPair] = CommonSubstrings.pairs(str1: self.str1, str2: self.str2)
 
     init(str1: String, str2: String) {
