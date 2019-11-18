@@ -46,7 +46,10 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
         let str1 = "this is a test"
         let str2 = "this is a test!"
         let matchingBlocks = Levenshtein.getMatchingBlocks(s1: str1, s2: str2)
-        let expectedResult: [MatchingBlock] = [MatchingBlock(sourcePos: 0, destPos: 0, length: 14), MatchingBlock(sourcePos: 14, destPos: 15, length: 0)]
+        let expectedResult: [MatchingBlock] = [
+            MatchingBlock(sourcePos: 0, destPos: 0, length: 14),
+            MatchingBlock(sourcePos: 14, destPos: 15, length: 0)]
+        
         XCTAssert(matchingBlocks == expectedResult)
     }
 }
