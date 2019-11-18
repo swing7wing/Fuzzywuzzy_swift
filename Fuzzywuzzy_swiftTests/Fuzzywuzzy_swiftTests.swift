@@ -51,20 +51,20 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
         }
     }
     
-    func testCommonSubstrings() {
-        let strPairs = [("some", ""), ("", "some"), ("", ""), ("aaabbcde", "abbdbcdaabde"), ("abcdef", "abcdef")]
-        for (str1, str2) in strPairs {
-            let pairs = CommonSubstrings.pairs(str1: str1, str2: str2)
-            print("STR1: \(str1)")
-            print("STR2: \(str2)")
-            for pair in pairs {
-                print("\(str1[pair.str1SubRange])")
-                print("\(str2[pair.str2SubRange])")
-                print("")
-            }
-            print("-----------------")
-        }
-    }
+//    func testCommonSubstrings() {
+//        let strPairs = [("some", ""), ("", "some"), ("", ""), ("aaabbcde", "abbdbcdaabde"), ("abcdef", "abcdef")]
+//        for (str1, str2) in strPairs {
+//            let pairs = CommonSubstrings.pairs(str1: str1, str2: str2)
+//            print("STR1: \(str1)")
+//            print("STR2: \(str2)")
+//            for pair in pairs {
+//                print("\(str1[pair.str1SubRange])")
+//                print("\(str2[pair.str2SubRange])")
+//                print("")
+//            }
+//            print("-----------------")
+//        }
+//    }
     
     func testStringMatcher() {
         let strPairs = [("some", ""), ("", "some"), ("", ""), ("我好hungry", "我好饿啊啊啊啊"), ("我好饿啊啊啊啊", "好烦啊")]

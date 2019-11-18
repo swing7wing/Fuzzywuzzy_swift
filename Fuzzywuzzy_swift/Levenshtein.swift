@@ -113,7 +113,7 @@ class Levenshtein: NSObject {
         if sourcePos < len1 || destPos < len2 {
             numberOfMatchingBlocks += 1
         }
-        var matchingBlocks: [MatchingBlock] = []
+        var matchingBlocks = [Int: MatchingBlock]()
         o = 0
         sourcePos = 0
         destPos = 0
@@ -132,8 +132,8 @@ class Levenshtein: NSObject {
                 var mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: ops[o].sourcePos! - sourcePos)
                 sourcePos = ops[o].sourcePos!
                 destPos = ops[o].destPos!
-                mbIndex += 1
                 matchingBlocks[mbIndex] = mb
+                mbIndex += 1
             }
             type = ops[o].editType!
             
@@ -175,7 +175,12 @@ class Levenshtein: NSObject {
         
         matchingBlocks[mbIndex] = finalBlock
         
-        return matchingBlocks
+        var matchingBlocksArray: [MatchingBlock] = []
+        for block in matchingBlocks.sorted(by: { $0.key < $1.key }) {
+            matchingBlocksArray.append(block.value)
+        }
+        
+        return matchingBlocksArray
     }
     
     private class func getEditOps(s1: String, s2: String) -> [EditOp] {
@@ -185,7 +190,7 @@ class Levenshtein: NSObject {
         var c2 = Array(s2)
         
         var i: Int
-        var matrix = NSMutableArray(capacity: len2 * len1)
+        var matrix = [Int: Int]()
         
         var p1 = 0
         var p2 = 0
@@ -232,23 +237,27 @@ class Levenshtein: NSObject {
             
             while ptrC <= ptrEnd {
                 
+                var c3 = matrix.filter({ $0.key == ptrPrev }).first!.value + (char1 != c2[ptrChar2] ? 1 : 0)
+                x += 1
                 ptrPrev += 1
                 ptrChar2 += 1
-                var c3 = matrix[ptrPrev] as! Int + (char1 != c2[ptrChar2] ? 1 : 0)
-                x += 1
                 
                 if x > c3 {
                     x = c3
                 }
-                c3 = matrix[ptrPrev] as! Int + 1
+                c3 = matrix[ptrPrev]! + 1
                 if x > c3 {
                     x = c3
                 }
-                ptrC += 1
                 matrix[ptrC] = x
+                ptrC += 1
             }
         }
-        return editOpsFromCostMatrix(len1: len1, c1: c1, p1: p1, o1: len1o, len2: len2, c2: c2, p2: p2, o2: len2o, matrix: matrix as! [Int])
+        var matrixArray: [Int] = []
+        for m in matrix.sorted(by: { $0.key < $1.key }) {
+            matrixArray.append(m.value)
+        }
+        return editOpsFromCostMatrix(len1: len1, c1: c1, p1: p1, o1: len1o, len2: len2, c2: c2, p2: p2, o2: len2o, matrix: matrixArray)
     }
     
     private class func editOpsFromCostMatrix(len1: Int, c1: [Character], p1: Int, o1: Int, len2: Int, c2: [Character], p2: Int, o2: Int, matrix: [Int]) -> [EditOp] {
@@ -258,7 +267,7 @@ class Levenshtein: NSObject {
         var pos: Int
         var ptr: Int
         pos = matrix[len1 * len2 - 1]
-        var ops = NSMutableArray(capacity: pos + 1 )
+        var ops = [Int: EditOp]()
         var dir = 0
         i = len1 - 1
         j = len2 - 1
@@ -311,7 +320,7 @@ class Levenshtein: NSObject {
             if dir == 0 && j != 0 && matrix[ptr] == matrix[ptr - 1] + 1 {
                 pos -= 1
                 var eop = EditOp()
-                ops[1] = "eop"
+                ops[pos] = eop
                 eop.editType = .insert
                 eop.sourcePos = i + o1
                 j -= 1
@@ -334,7 +343,11 @@ class Levenshtein: NSObject {
             }
             print("Can't calculate edit op")
         }
-        return ops as! [EditOp]
+        var opsArray: [EditOp] = []
+        for op in ops.sorted(by: { $0.key < $1.key }) {
+            opsArray.append(op.value)
+        }
+        return opsArray
     }
 }
 
