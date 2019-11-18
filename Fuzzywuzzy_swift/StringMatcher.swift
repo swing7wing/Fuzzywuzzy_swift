@@ -8,22 +8,22 @@
 
 import UIKit
 
-class StringMatcher: NSObject {
-    let str1: String
-    let str2: String
-
-    lazy var levenshteinDistance: Int = Levenshtein.distance(str1: self.str1, str2: self.str2)
-    lazy var matchingBlocks = Levenshtein.getMatchingBlocks(s1: self.str1, s2: self.str2)
-
-    init(str1: String, str2: String) {
-        self.str1 = str1
-        self.str2 = str2
-        super.init()
-    }
-
-    func fuzzRatio() -> Float {
-        let lenSum = (str1.count + str2.count)
-        if lenSum == 0 { return 1 }
-        return Float(lenSum - levenshteinDistance) / Float(lenSum)
-    }
-}
+//class StringMatcher: NSObject {
+//    let str1: String
+//    let str2: String
+//
+//    lazy var levenshteinDistance: Int = Levenshtein.distance(str1: self.str1, str2: self.str2)
+//    lazy var matchingBlocks = Levenshtein.getMatchingBlocks(s1: self.str1, s2: self.str2)
+//
+//    init(str1: String, str2: String) {
+//        self.str1 = str1
+//        self.str2 = str2
+//        super.init()
+//    }
+//
+//    func fuzzRatio() -> Float {
+//        let lenSum = (str1.count + str2.count)
+//        if lenSum == 0 { return 1 }
+//        return Float(lenSum - levenshteinDistance) / Float(lenSum)
+//    }
+//}

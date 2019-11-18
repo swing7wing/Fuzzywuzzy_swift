@@ -8,26 +8,31 @@
 
 import Foundation
 
+/*  This is a port of the C# based fuzzywuzzy implementation.
+    https://github.com/JakeBayer/FuzzySharp
+    This has all the functions needed from the Python-levenshtein C implementation.
+    The code was ported line by line but unfortunately it was mostly undocumented,
+    so it is mostly non readable (eg. var names)  */
 class DiffUtils {
     
     class func getRatio(s1: String, s2: String) -> Double {
         
-        var totalLength = s1.count + s2.count
+        let totalLength = s1.count + s2.count
         
         if totalLength == 0 {
             return 0
         }
         
-        var levDistance = getLevDistance(s1: s1, s2: s2)
-        var ratio = Double(totalLength - levDistance) / Double(totalLength)
+        let levDistance = getLevDistance(s1: s1, s2: s2)
+        let ratio = Double(totalLength - levDistance) / Double(totalLength)
         
         return ratio
     }
     
     class func getLevDistance(s1: String, s2: String) -> Int {
         var i: Int
-        var c1 = Array(s1)
-        var c2 = Array(s2)
+        let c1 = Array(s1)
+        let c2 = Array(s2)
         var str1 = 0
         var str2 = 0
         var len1 = s1.count
@@ -64,7 +69,7 @@ class DiffUtils {
         len2 += 1
         
         var row: [Int: Int] = [:]
-        var end = len2 - 1
+        let end = len2 - 1
         
         for index in 0..<len2 {
             row[index] = index
@@ -73,7 +78,7 @@ class DiffUtils {
         /* go through the matrix and compute the costs. yes this is an extremely obfuscated version, but also extremely memory-conservative and relatively fast. */
         for index in 1..<len1 {
             var p = 1
-            var ch1 = c1[str1 + index - 1]
+            let ch1 = c1[str1 + index - 1]
             var c2p = str2
             var d = index
             var x = index

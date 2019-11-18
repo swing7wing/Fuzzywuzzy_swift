@@ -9,40 +9,7 @@
 import UIKit
 
 class Levenshtein: NSObject {
-    class func distance(str1: String, str2: String) -> Int {
-        /// convert String to array of Characters
-        let charArr1 = Array(str1)
-        let charArr2 = Array(str2)
 
-        /// handle empty string cases
-        if charArr1.count == 0 || charArr2.count == 0 {
-            return charArr1.count + charArr2.count
-        }
-
-        /// create the cost matrix
-        var costM = Array(repeating: Array(repeating: 0, count: charArr2.count+1), count: charArr1.count+1)
-
-        /// initial values in cost matrix
-        for i in Array(0...charArr2.count) {
-            costM[0][i] = i
-        }
-
-        for i in Array(0...charArr1.count) {
-            costM[i][0] = i
-        }
-
-        for i in Array(1...charArr1.count) {
-            for j in Array(1...charArr2.count) {
-                let cost1 = costM[i-1][j-1] + (charArr1[i-1] == charArr2[j-1] ? 0 : 1)
-                let cost2 = costM[i][j-1] + 1
-                let cost3 = costM[i-1][j] + 1
-                costM[i][j] = min(cost1, cost2, cost3)
-            }
-        }
-
-        return costM[charArr1.count][charArr2.count]
-    }
-    
     class func getMatchingBlocks(s1: String, s2: String) -> [MatchingBlock] {
         let ops = getEditOps(s1: s1, s2: s2)
         let len1 = s1.count
@@ -226,9 +193,9 @@ class Levenshtein: NSObject {
         for index in 1..<len1 {
             var ptrPrev = (index - 1) * len2
             var ptrC = index * len2
-            var ptrEnd = ptrC + len2 - 1
+            let ptrEnd = ptrC + len2 - 1
             
-            var char1 = c1[p1 + index - 1]
+            let char1 = c1[p1 + index - 1]
             var ptrChar2 = p2
             
             var x = index
@@ -276,7 +243,7 @@ class Levenshtein: NSObject {
         while i > 0 || j > 0 {
             
             if dir < 0 && j != 0 && matrix[ptr] == matrix[ptr - 1] + 1 {
-                var eop = EditOp()
+                let eop = EditOp()
                 pos -= 1
                 ops[pos] = eop
                 eop.editType = .insert
@@ -287,7 +254,7 @@ class Levenshtein: NSObject {
                 continue
             }
             if dir > 0 && i != 0 && matrix[ptr] == matrix[ptr - len2] + 1 {
-                var eop = EditOp()
+                let eop = EditOp()
                 pos -= 1
                 ops[pos] = eop
                 eop.editType = .delete
@@ -306,7 +273,7 @@ class Levenshtein: NSObject {
             }
             if i != 0 && j != 0 && matrix[ptr] == matrix[ptr - len2 - 1] + 1 {
                 pos -= 1
-                var eop = EditOp()
+                let eop = EditOp()
                 ops[pos] = eop
                 eop.editType = .replace
                 i -= 1
@@ -319,7 +286,7 @@ class Levenshtein: NSObject {
             }
             if dir == 0 && j != 0 && matrix[ptr] == matrix[ptr - 1] + 1 {
                 pos -= 1
-                var eop = EditOp()
+                let eop = EditOp()
                 ops[pos] = eop
                 eop.editType = .insert
                 eop.sourcePos = i + o1
