@@ -2,8 +2,8 @@
 //  LevenshteinDistance.swift
 //  Fuzzywuzzy_swift
 //
-//  Created by XianLi on 30/8/2016.
-//  Copyright © 2016 LiXian. All rights reserved.
+//  Created by Jeroen Besse on 18/11/2019.
+//  Copyright © 2019 LiXian. All rights reserved.
 //
 
 import UIKit
@@ -26,7 +26,6 @@ class Levenshtein: NSObject {
         var o = 0
         sourcePos = 0
         destPos = 0
-        // Possibly add destPos = 0??
         var type: EditType
         
         i = n

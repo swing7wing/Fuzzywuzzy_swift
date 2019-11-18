@@ -2,8 +2,8 @@
 //  Fuzzywuzzy_swiftTests.swift
 //  Fuzzywuzzy_swiftTests
 //
-//  Created by XianLi on 30/8/2016.
-//  Copyright © 2016 LiXian. All rights reserved.
+//  Created by Jeroen Besse on 18/11/2019.
+//  Copyright © 2019 LiXian. All rights reserved.
 //
 
 import XCTest
@@ -20,57 +20,33 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-//    
-//    func testTokenSetRatio() {
-//        let strPairs = [("some", ""), ("", "some"), ("", ""), ("fuzzy fuzzy wuzzy was a bear", "wuzzy fuzzy was a bear"), ("fuzzy$*#&)$#(wuzzy*@()#*()!<><>was a bear", "wuzzy wuzzy fuzzy was a bear")]
-//        for (str1, str2) in strPairs {
-//            print("STR1: \(str1)")
-//            print("STR2: \(str2)")
-//            print("TOKEN SET RATIO: \(String.fuzzTokenSetRatio(str1: str1, str2: str2))")
-//            print("-----------------")
-//        }
-//    }
-//    
-//    func testTokenSortRatio() {
-//        let strPairs = [("some", ""), ("", "some"), ("", ""), ("fuzzy wuzzy was a bear", "wuzzy fuzzy was a bear"), ("fuzzy$*#&)$#(wuzzy*@()#*()!<><>was a bear", "wuzzy fuzzy was a bear")]
-//        for (str1, str2) in strPairs {
-//            print("STR1: \(str1)")
-//            print("STR2: \(str2)")
-//            print("TOKEN SORT RATIO: \(String.fuzzTokenSortRatio(str1: str1, str2: str2))")
-//            print("-----------------")
-//        }
-//    }
     
-    func testPartialRatio() {
-        let strPairs = [("this is a test", "this is a test!"), ("", "some"), ("", ""), ("abcd", "XXXbcdeEEE"), ("what a wonderful 世界", "wonderful 世"), ("this is a test", "this is a test!")]
-        for (str1, str2) in strPairs {
-            print("STR1: \(str1)")
-            print("STR2: \(str2)")
-            print("PARTIO RATIO: \(String.fuzzPartialRatio(str1: str1, str2: str2))")
-            print("-----------------")
+    struct RatioTestCase {
+        var str1: String
+        var str2: String
+        var expectedResult: Int
+    }
+    
+    func testRatio() {
+        
+        var testCases: [RatioTestCase] = []
+        testCases.append(RatioTestCase(str1: "this is a test", str2: "this is a test!", expectedResult: 100))
+        testCases.append(RatioTestCase(str1: "", str2: "some", expectedResult: 0))
+        testCases.append(RatioTestCase(str1: "abcd", str2: "XXXbcdeEEE", expectedResult: 75))
+        testCases.append(RatioTestCase(str1: "what a wonderful 世界", str2: "wonderful 世", expectedResult: 100))
+        testCases.append(RatioTestCase(str1: "similar", str2: "somewhresimlrbetweenthisstring", expectedResult: 71))
+        
+        for testCase in testCases {
+            XCTAssert(String.fuzzPartialRatio(str1: testCase.str1, str2: testCase.str2) == testCase.expectedResult)
         }
     }
-//    
-//    func testLevenshteinDistance() {
-//        XCTAssert(Levenshtein.distance(str1: "something", str2: "some") == 5)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "something", str2: "omethi") == 3)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "something", str2: "same") == 6)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "something", str2: "samewrongthong") == 7)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "something", str2: "") == 9)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "", str2: "some") == 4)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "some", str2: "some") == 0)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "", str2: "") == 0)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "我something", str2: "someth") == 4)
-//        
-//        XCTAssert(Levenshtein.distance(str1: "我好饿啊啊啊啊", str2: "好烦啊") == 5)
-//        
-//    }
+    
+    func testMatchingBlocks() {
+        
+        let str1 = "this is a test"
+        let str2 = "this is a test!"
+        let matchingBlocks = Levenshtein.getMatchingBlocks(s1: str1, s2: str2)
+        let expectedResult: [MatchingBlock] = [MatchingBlock(sourcePos: 0, destPos: 0, length: 14), MatchingBlock(sourcePos: 14, destPos: 15, length: 0)]
+        XCTAssert(matchingBlocks == expectedResult)
+    }
 }
