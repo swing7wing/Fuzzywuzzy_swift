@@ -42,7 +42,7 @@ class Fuzzywuzzy_swiftTests: XCTestCase {
     }
     
     func testPartialRatio() {
-        let strPairs = [("some", ""), ("", "some"), ("", ""), ("abcd", "XXXbcdeEEE"), ("what a wonderful 世界", "wonderful 世"), ("this is a test", "this is a test!")]
+        let strPairs = [("this is a test", "this is a test!"), ("", "some"), ("", ""), ("abcd", "XXXbcdeEEE"), ("what a wonderful 世界", "wonderful 世"), ("this is a test", "this is a test!")]
         for (str1, str2) in strPairs {
             print("STR1: \(str1)")
             print("STR2: \(str2)")

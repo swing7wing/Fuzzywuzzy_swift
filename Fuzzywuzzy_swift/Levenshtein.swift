@@ -44,11 +44,11 @@ class Levenshtein: NSObject {
     }
     
     class func getMatchingBlocks(s1: String, s2: String) -> [MatchingBlock] {
-        var ops = getEditOps(s1: s1, s2: s2)
-        var len1 = s1.count
-        var len2 = s2.count
+        let ops = getEditOps(s1: s1, s2: s2)
+        let len1 = s1.count
+        let len2 = s2.count
         
-        var n = ops.count
+        let n = ops.count
         
         var numberOfMatchingBlocks: Int
         var i: Int
@@ -129,7 +129,7 @@ class Levenshtein: NSObject {
                 break
             }
             if sourcePos < ops[o].sourcePos! || destPos < ops[o].destPos! {
-                var mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: ops[o].sourcePos! - sourcePos)
+                let mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: ops[o].sourcePos! - sourcePos)
                 sourcePos = ops[o].sourcePos!
                 destPos = ops[o].destPos!
                 matchingBlocks[mbIndex] = mb
@@ -166,12 +166,13 @@ class Levenshtein: NSObject {
         }
         
         if sourcePos < len1 || destPos < len2 {
-            var mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: len1 - sourcePos)
-            mbIndex += 1
+            let mb = MatchingBlock(sourcePos: sourcePos, destPos: destPos, length: len1 - sourcePos)
+            
             matchingBlocks[mbIndex] = mb
+            mbIndex += 1
         }
         
-        var finalBlock = MatchingBlock(sourcePos: len1, destPos: len2, length: 0)
+        let finalBlock = MatchingBlock(sourcePos: len1, destPos: len2, length: 0)
         
         matchingBlocks[mbIndex] = finalBlock
         
@@ -185,11 +186,10 @@ class Levenshtein: NSObject {
     
     private class func getEditOps(s1: String, s2: String) -> [EditOp] {
         var len1 = s1.count
-        var c1 = Array(s1)
+        let c1 = Array(s1)
         var len2 = s2.count
-        var c2 = Array(s2)
+        let c2 = Array(s2)
         
-        var i: Int
         var matrix = [Int: Int]()
         
         var p1 = 0
@@ -206,7 +206,7 @@ class Levenshtein: NSObject {
             
             len1o += 1
         }
-        var len2o = len1o
+        let len2o = len1o
         
         //strip common suffix
         while len1 > 0 && len2 > 0 && c1[p1 + len1 - 1] == c2[p2 + len2 - 1] {

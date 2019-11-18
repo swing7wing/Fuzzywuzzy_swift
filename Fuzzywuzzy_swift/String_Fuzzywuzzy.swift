@@ -30,23 +30,31 @@ public extension String {
         let m = StringMatcher(str1: shorter, str2: longer)
         let matchingBlocks = m.matchingBlocks
         
-        var scores: [Float] = []
-        var maxScore: Float = 0
+        var scores: [Double] = []
         
-        for var matchingBlock in matchingBlocks {
+        for block in matchingBlocks {
             
-            var dist = matchingBlock.destPos - matchingBlock.sourcePos
+            let dist = block.destPos - block.sourcePos
             
-            var longStart = dist > 0 ? dist : 0
+            let longStart = dist > 0 ? dist : 0
             var longEnd = longStart + shorter.count
             
             if longEnd > longer.count {
                 longEnd = longer.count
             }
-            var longSubstr = longer.suffix(longStart).suffix(longEnd - longStart)
             
-            var ratio = m.fuzzRatio()
-            
+            //handle empty strings
+            var longSubstr: String
+            if longStart != longEnd {
+                let startIndex = longer.index(longer.startIndex, offsetBy: longStart)
+                let endIndex = longer.index(longer.startIndex, offsetBy: longEnd - 1)
+                longSubstr = String(longer[startIndex...endIndex])
+            } else {
+                longSubstr = ""
+            }
+
+            let ratio = DiffUtils.getRatio(s1: shorter, s2: longSubstr)
+
             if ratio > 0.995 {
                 return 100
             }
